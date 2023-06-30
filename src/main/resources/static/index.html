@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>semih anadolu hr210015</title>
+
+</head>
+<body>
+semih anadolu hr210015
+
+<div>
+  <h1>misafir ekle</h1>
+  <input type="text" id="ad" placeholder="misafir adı">
+  <input type="text" id="yas" placeholder="yaş">
+  <input type="text" id="kilo" placeholder="kilo">
+  <input type="date" id="gelisTarihi" placeholder="geliş tarihi">
+  <input type="text" id="notlar" placeholder="notlar">
+  <input type="button" value="ekle" onclick="ekle()"/>
+</div>
+
+<div>
+  <h1>getir</h1>
+  <input type="text" id="id1" placeholder="id">
+  <input type="button" value="getir" onclick="getir()"/>
+  <div id="getirr"></div>
+</div>
+
+<div>
+  <h1>güncelle</h1>
+  <input type="text" id="id" placeholder="id">
+  <input type="text" id="ad1" placeholder="ad">
+  <input type="text" id="yas1" placeholder="yaş">
+  <input type="text" id="kilo1" placeholder="kilo">
+  <input type="date" id="gelisTarihi1" placeholder="geliş tarihi">
+  <input type="text" id="notlar1" placeholder="notlar">
+  <input type="button" value="guncelle" onclick="guncelle()"/>
+</div>
+<div>
+  <h1>sil</h1>
+  <input type="text" id="id2" placeholder="id">
+  <input type="button" value="sil" onclick="sil()"/>
+</div>
+<div>
+  <h1>listele</h1>
+  <input type="button" value="listele" onclick="listele()"/>
+  <div id="liste"></div>
+</div>
+<script type="application/javascript">
+ function ekle() {
+            const body = {
+                misafirAd: document.getElementById("ad").value,
+                yas: document.getElementById("yas").value,
+                kilo: document.getElementById("kilo").value,
+                gelisTarihi: document.getElementById("gelisTarihi").value,
+                notlar: document.getElementById("notlar").value
+            }
+            var httpRequest = new XMLHttpRequest();
+            httpRequest.open("POST", "http://localhost:8080/ekle", true);
+            httpRequest.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            httpRequest.onreadystatechange = function () {
+                if(httpRequest.readyState == 4 && httpRequest.status == 200) {
+                    alert("eklendi")
+                }
+            };
+            httpRequest.send(JSON.stringify(body));
+        }
+ function getir() {
+            var id = document.getElementById("id1").value;
+            var httpRequest = new XMLHttpRequest();
+            httpRequest.open("GET", "http://localhost:8080/getir/" + id, true);
+            httpRequest.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            httpRequest.onreadystatechange = function () {
+                if(httpRequest.readyState == 4 && httpRequest.status == 200) {
+                    var liste = JSON.parse(httpRequest.response);
+                    document.getElementById("getirr").innerHTML = liste.id + "  " + liste.misafirAd + "  " +liste.yas + "  " +liste.kilo + "  " +liste.gelisTarihi + "  " + liste.notlar;
+                }
+            };
+            httpRequest.send();
+        }
+ function guncelle() {
+            id= document.getElementById("id").value;
+            const body = {
+                id: document.getElementById("id").value,
+                misafirAd: document.getElementById("ad1").value,
+                yas: document.getElementById("yas1").value,
+                kilo: document.getElementById("kilo1").value,
+                gelisTarihi: document.getElementById("gelisTarihi1").value,
+                notlar: document.getElementById("notlar1").value
+            }
+            var httpRequest = new XMLHttpRequest();
+            httpRequest.open("PUT", "http://localhost:8080/guncelle/" + id, true);
+            httpRequest.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            httpRequest.onreadystatechange = function () {
+                if(httpRequest.readyState == 4 && httpRequest.status == 200) {
+                    alert("güncellendi")
+                }
+            };
+            httpRequest.send(JSON.stringify(body));
+        }
+ function sil() {
+            var id = document.getElementById("id2").value;
+            var httpRequest = new XMLHttpRequest();
+            httpRequest.open("DELETE", "http://localhost:8080/sil/" + id, true);
+            httpRequest.onreadystatechange = function () {
+                if(httpRequest.readyState == 4 && httpRequest.status == 200) {
+                    alert("silindi")
+                }
+            };
+            httpRequest.send();
+        }
+
+
+        function listele() {
+            var httpRequest = new XMLHttpRequest();
+            httpRequest.open("GET", "http://localhost:8080/listele", true);
+            httpRequest.onreadystatechange = function () {
+                if(httpRequest.readyState == 4 && httpRequest.status == 200) {
+                    var kayitlar = JSON.parse(httpRequest.response);
+                    var tabloIlkKisim = "<table><tr><th>id</th><th>ad</th><th>yas</th><th>kilo</th><th>geliş tarihi</th><th>notlar</th></tr>";
+                    var tabloVeriKismi = "";
+                    for (var i = 0; i < kayitlar.length; i++) {
+                        tabloVeriKismi += "<tr><td>" + kayitlar[i].id + "</td>"
+                                        + "<td>" + kayitlar[i].misafirAd + "</td>"
+                                        + "<td>" + kayitlar[i].yas + "</td>"
+                                        + "<td>" + kayitlar[i].kilo + "</td>"
+                                        + "<td>" + kayitlar[i].gelisTarihi + "</td>"
+                                        + "<td>" + kayitlar[i].notlar + "</td></tr>";
+                    }
+                    var tabloSonKisim = "</table>";
+                    var tablo = tabloIlkKisim + tabloVeriKismi + tabloSonKisim;
+                    document.getElementById("liste").innerHTML = tablo;
+                }
+            };
+            httpRequest.send();
+        }
+    </script>
+</body>
+</html>
